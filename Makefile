@@ -233,7 +233,7 @@ test: unittest e2etest
 
 ## unittest Run all unit tests
 .PHONY: unittest
-unittest: test_unikontainers test_metrics test_network test_hypervisors test_unikernels
+unittest: test_unikontainers test_metrics test_network test_hypervisors test_unikernels test_cmd_urunc
 
 ## e2etest Run all end-to-end tests
 .PHONY: e2etest
@@ -267,6 +267,12 @@ test_hypervisors:
 test_unikernels:
 	@echo "Unit testing in unikernels"
 	@GOFLAGS=$(TEST_FLAGS) $(GO) test $(TEST_OPTS) ./pkg/unikontainers/unikernels -v
+	@echo " "
+
+## test_cmd_urunc Run unit tests for the urunc CLI (cmd/urunc)
+test_cmd_urunc:
+	@echo "Unit testing in cmd/urunc"
+	@GOFLAGS=$(TEST_FLAGS) $(GO) test $(TEST_OPTS) ./cmd/urunc -v
 	@echo " "
 
 ## test_nerdctl Run all end-to-end tests with nerdctl

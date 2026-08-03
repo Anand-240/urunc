@@ -250,10 +250,16 @@ func (l *Linux) parseCmdLine(cmdLine []string) error {
 		return fmt.Errorf("no init was specified")
 	}
 
-	// Wrap multi-word arguments in quotes for urunit
+	// Wrap multi-word arguments in quotes for urunit. Arguments that already
+	// contain a single quote cannot be safely wrapped this way, since naively
+	// concatenating quotes produces an unbalanced quote sequence that
+	// corrupts urunit's token-boundary parsing of the boot cmdline.
 	normalizedArgs := make([]string, len(cmdLine))
 	for i, arg := range cmdLine {
 		arg = strings.TrimSpace(arg)
+		if strings.Contains(arg, "'") {
+			return fmt.Errorf("argument %q contains an unsupported single quote character", arg)
+		}
 		if strings.Contains(arg, " ") {
 			normalizedArgs[i] = "'" + arg + "'"
 		} else {
